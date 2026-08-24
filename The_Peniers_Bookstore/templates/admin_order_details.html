@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order {{ order.order_number or order.id }} | The Peniers Admin</title>
+
+<style>
+
+*{margin:0; padding:0; box-sizing:border-box; font-family:Arial, Helvetica, sans-serif;}
+
+body{background:#f4f6f9;}
+
+header{
+    background:#1a1420;
+    color:white;
+    padding:18px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{font-size:22px; font-weight:800;}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    margin-left:20px;
+    font-weight:600;
+    font-size:14px;
+    opacity:.9;
+}
+
+nav a:hover{opacity:1;}
+
+.container{
+    max-width:800px;
+    margin:30px auto;
+    padding:0 20px;
+}
+
+.back-link{
+    display:inline-block;
+    margin-bottom:16px;
+    color:#ff3d26;
+    text-decoration:none;
+    font-weight:700;
+    font-size:13.5px;
+}
+
+.card{
+    background:white;
+    border-radius:12px;
+    padding:24px;
+    box-shadow:0 3px 10px rgba(0,0,0,.06);
+    margin-bottom:20px;
+}
+
+.card h2{
+    font-size:16px;
+    margin-bottom:14px;
+    color:#1a1420;
+}
+
+.order-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.order-header h1{
+    font-size:22px;
+    color:#1a1420;
+}
+
+.order-header .date{
+    color:#777;
+    font-size:13px;
+}
+
+.badge{
+    padding:4px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:700;
+}
+
+.badge.paid{background:#d4edda; color:#155724;}
+.badge.unpaid{background:#f8d7da; color:#721c24;}
+
+.info-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+}
+
+.info-grid .label{
+    font-size:11.5px;
+    color:#999;
+    text-transform:uppercase;
+    letter-spacing:.3px;
+}
+
+.info-grid .value{
+    font-size:14px;
+    font-weight:600;
+    color:#1a1420;
+    margin-top:2px;
+}
+
+table{width:100%; border-collapse:collapse; margin-top:6px;}
+
+th, td{
+    text-align:left;
+    padding:9px 6px;
+    font-size:13.5px;
+    border-bottom:1px solid #eee;
+}
+
+th{color:#777; font-weight:600;}
+
+.total-row td{
+    font-weight:800;
+    font-size:15px;
+    border-top:2px solid #eee;
+    border-bottom:none;
+}
+
+.status-form select{
+    padding:8px 12px;
+    border-radius:6px;
+    border:1px solid #ccc;
+    font-size:13.5px;
+}
+
+.status-form button{
+    padding:8px 16px;
+    background:#1a1420;
+    color:white;
+    border:none;
+    border-radius:6px;
+    font-weight:700;
+    cursor:pointer;
+    margin-left:8px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">The Peniers &middot; Admin</div>
+    <nav>
+        <a href="/admin">Dashboard</a>
+        <a href="/manage-books">Books</a>
+        <a href="/admin-orders">Orders</a>
+        <a href="/admin/complaints">Complaints</a>
+        <a href="/admin/feedback">Feedback</a>
+        <a href="/sales-report">Sales</a>
+        <a href="/admin-logout">Logout</a>
+    </nav>
+</header>
+
+<div class="container">
+
+    <a class="back-link" href="/admin-orders">&larr; Back to All Orders</a>
+
+    <div class="card">
+
+        <div class="order-header">
+            <div>
+                <h1>Order {{ order.order_number or ('#' ~ order.id) }}</h1>
+                <div class="date">Placed on {{ order.created_at.strftime("%d %B %Y, %I:%M %p") }}</div>
+            </div>
+            <span class="badge {{ 'paid' if order.payment_status == 'Paid' else 'unpaid' }}">
+                {{ order.payment_status }}
+            </span>
+        </div>
+
+    </div>
+
+    <div class="card">
+        <h2>Customer & Delivery</h2>
+        <div class="info-grid">
+            <div>
+                <div class="label">Name</div>
+                <div class="value">{{ order.customer.fullname }}</div>
+            </div>
+            <div>
+                <div class="label">Phone</div>
+                <div class="value">{{ order.customer.phone }}</div>
+            </div>
+            <div>
+                <div class="label">Email</div>
+                <div class="value">{{ order.customer.email }}</div>
+            </div>
+            <div>
+                <div class="label">Payment Method</div>
+                <div class="value">{{ order.payment_method or "—" }}</div>
+            </div>
+            <div style="grid-column:1/-1;">
+                <div class="label">Delivery Address</div>
+                <div class="value">{{ order.delivery_address }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Items</h2>
+        <table>
+            <tr>
+                <th>Book</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Subtotal</th>
+            </tr>
+            {% for item in order.items %}
+            <tr>
+                <td>{{ item.book.title }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>₦{{ "{:,.0f}".format(item.price) }}</td>
+                <td>₦{{ "{:,.0f}".format(item.price * item.quantity) }}</td>
+            </tr>
+            {% endfor %}
+            <tr class="total-row">
+                <td colspan="3">Total</td>
+                <td>₦{{ "{:,.0f}".format(order.total) }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2>Update Order Status</h2>
+        <form class="status-form" method="POST" action="/admin/order/{{ order.id }}/status">
+            <select name="status">
+                {% for s in ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"] %}
+                <option value="{{ s }}" {{ "selected" if order.status == s }}>{{ s }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Update</button>
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>

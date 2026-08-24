@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Order Details | The Peniers</title>
+
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f6f8;
+    color: #222;
+}
+
+.header {
+    background: #111827;
+    color: white;
+    padding: 22px 40px;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+.container {
+    width: 92%;
+    max-width: 1100px;
+    margin: 30px auto;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.07);
+}
+
+.card h2 {
+    margin-top: 0;
+    color: #111827;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.info {
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.label {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 5px;
+}
+
+.value {
+    font-weight: bold;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 14px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+    background: #f8fafc;
+}
+
+.total {
+    text-align: right;
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.status {
+    display: inline-block;
+    padding: 7px 12px;
+    border-radius: 20px;
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.back {
+    display: inline-block;
+    margin-bottom: 20px;
+    text-decoration: none;
+    color: #2563eb;
+    font-weight: bold;
+}
+
+@media(max-width:700px) {
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        width: 94%;
+    }
+
+    table {
+        font-size: 13px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+    <h1>The Peniers</h1>
+
+</div>
+
+<div class="container">
+
+<a href="/admin-orders" class="back">
+    ← Back to Orders
+</a>
+
+
+<div class="card">
+
+    <h2>Order Information</h2>
+
+    <div class="info-grid">
+
+        <div class="info">
+
+            <div class="label">
+                Order Number
+            </div>
+
+            <div class="value">
+                {{ order.order_number }}
+            </div>
+
+        </div>
+
+
+        <div class="info">
+
+            <div class="label">
+                Date Ordered
+            </div>
+
+            <div class="value">
+                {{ order.created_at.strftime("%d %B %Y, %I:%M %p") if order.created_at else "N/A" }}
+            </div>
+
+        </div>
+
+
+        <div class="info">
+
+            <div class="label">
+                Payment Method
+            </div>
+
+            <div class="value">
+                {{ order.payment_method or "Not specified" }}
+            </div>
+
+        </div>
+
+
+        <div class="info">
+
+            <div class="label">
+                Payment Status
+            </div>
+
+            <div class="value">
+                {{ order.payment_status }}
+            </div>
+
+        </div>
+
+
+        <div class="info">
+
+            <div class="label">
+                Order Status
+            </div>
+
+            <div class="value">
+
+                <span class="status">
+                    {{ order.status }}
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>Customer Information</h2>
+
+    <div class="info-grid">
+
+        <div class="info">
+
+            <div class="label">
+                Full Name
+            </div>
+
+            <div class="value">
+                {{ order.customer.fullname }}
+            </div>
+
+        </div>
+
+
+        <div class="info">
+
+            <div class="label">
+                Phone
+            </div>
+
+            <div class="value">
+                {{ order.customer.phone }}
+            </div>
+
+        </div>
+
+
+        <div class="info">
+
+            <div class="label">
+                Email
+            </div>
+
+            <div class="value">
+                {{ order.customer.email }}
+            </div>
+
+        </div>
+
+
+        <div class="info">
+
+            <div class="label">
+                Delivery Address
+            </div>
+
+            <div class="value">
+                {{ order.delivery_address }}
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>Books Ordered</h2>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>Book</th>
+
+                <th>Quantity</th>
+
+                <th>Price</th>
+
+                <th>Subtotal</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for item in order.items %}
+
+            <tr>
+
+                <td>
+                    {{ item.book.title }}
+                </td>
+
+                <td>
+                    {{ item.quantity }}
+                </td>
+
+                <td>
+                    ₦{{ "%.2f"|format(item.price) }}
+                </td>
+
+                <td>
+                    ₦{{ "%.2f"|format(item.price * item.quantity) }}
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+
+    <div class="total">
+
+        Total:
+        ₦{{ "%.2f"|format(order.total) }}
+
+    </div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

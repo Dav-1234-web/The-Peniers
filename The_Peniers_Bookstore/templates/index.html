@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Peniers Bookstore</title>
+
+<style>
+
+:root{
+    --ink:#1a1420;
+    --paper:#fff6f1;
+    --card:#ffffff;
+    --flame:#ff3d26;
+    --flame-dark:#d81f3f;
+    --zest:#ffb100;
+    --grape:#7a2ff0;
+    --line:#f0e2da;
+    --muted:#8a7a76;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Poppins','Segoe UI',Arial,Helvetica,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    padding-bottom:70px;
+}
+
+a{
+    color:inherit;
+}
+
+/* -------------------- top promo strip -------------------- */
+
+.promo-strip{
+    background:var(--ink);
+    color:#fff;
+    font-size:12.5px;
+    letter-spacing:.3px;
+    text-align:center;
+    padding:7px 10px;
+    font-weight:600;
+}
+
+.promo-strip span{
+    color:var(--zest);
+}
+
+/* -------------------- header -------------------- */
+
+header{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:linear-gradient(120deg,var(--flame),var(--flame-dark));
+    padding:14px 20px;
+}
+
+.header-inner{
+    max-width:1200px;
+    margin:0 auto;
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.logo{
+    font-size:26px;
+    font-weight:800;
+    color:#fff;
+    letter-spacing:-.5px;
+    white-space:nowrap;
+    text-decoration:none;
+}
+
+.logo span{
+    color:var(--zest);
+}
+
+.search-form{
+    flex:1;
+    display:flex;
+    background:#fff;
+    border-radius:24px;
+    overflow:hidden;
+    box-shadow:0 3px 10px rgba(0,0,0,.15);
+}
+
+.search-form input{
+    flex:1;
+    border:none;
+    outline:none;
+    padding:11px 18px;
+    font-size:14px;
+    font-family:inherit;
+}
+
+.search-form button{
+    border:none;
+    background:var(--ink);
+    color:#fff;
+    padding:0 20px;
+    cursor:pointer;
+    font-weight:700;
+    font-size:13px;
+}
+
+.header-links{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    flex-shrink:0;
+}
+
+.header-links a{
+    color:#fff;
+    text-decoration:none;
+    font-size:13px;
+    font-weight:600;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:2px;
+    opacity:.95;
+}
+
+.header-links a:hover{
+    opacity:1;
+}
+
+.icon-circle{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    background:rgba(255,255,255,.2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:16px;
+}
+
+/* -------------------- category chips -------------------- */
+
+.chip-row{
+    max-width:1200px;
+    margin:0 auto;
+    padding:14px 20px 4px;
+    display:flex;
+    gap:10px;
+    overflow-x:auto;
+    scrollbar-width:none;
+}
+
+.chip-row::-webkit-scrollbar{
+    display:none;
+}
+
+.chip{
+    flex-shrink:0;
+    padding:9px 18px;
+    border-radius:20px;
+    background:#fff;
+    border:1.5px solid var(--line);
+    font-size:13.5px;
+    font-weight:600;
+    text-decoration:none;
+    color:var(--ink);
+    white-space:nowrap;
+}
+
+.chip.active{
+    background:var(--ink);
+    border-color:var(--ink);
+    color:#fff;
+}
+
+/* -------------------- flash sale banner -------------------- */
+
+.flash-banner{
+    max-width:1200px;
+    margin:16px auto 0;
+    padding:0 20px;
+}
+
+.flash-inner{
+    background:linear-gradient(100deg,var(--grape),#b23dfa 55%,var(--flame));
+    border-radius:16px;
+    padding:20px 26px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    color:#fff;
+    flex-wrap:wrap;
+}
+
+.flash-inner h2{
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:-.3px;
+}
+
+.flash-inner p{
+    font-size:13px;
+    opacity:.9;
+    margin-top:3px;
+}
+
+.countdown{
+    display:flex;
+    gap:8px;
+}
+
+.countdown div{
+    background:rgba(0,0,0,.25);
+    border-radius:8px;
+    padding:8px 11px;
+    text-align:center;
+    min-width:44px;
+}
+
+.countdown .num{
+    font-size:19px;
+    font-weight:800;
+    display:block;
+    font-variant-numeric:tabular-nums;
+}
+
+.countdown .lbl{
+    font-size:9.5px;
+    text-transform:uppercase;
+    opacity:.85;
+}
+
+/* -------------------- section heading -------------------- */
+
+.section-title{
+    max-width:1200px;
+    margin:34px auto 16px;
+    padding:0 20px;
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+}
+
+.section-title h3{
+    font-size:19px;
+    font-weight:800;
+}
+
+.section-title .fire{
+    font-size:19px;
+}
+
+.section-title .count{
+    color:var(--muted);
+    font-size:13px;
+    font-weight:500;
+}
+
+/* -------------------- product grid -------------------- */
+
+.grid-wrap{
+    max-width:1200px;
+    margin:0 auto;
+    padding:0 20px 40px;
+}
+
+.books{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(168px,1fr));
+    gap:14px;
+}
+
+.book{
+    background:var(--card);
+    border-radius:12px;
+    overflow:hidden;
+    text-decoration:none;
+    color:var(--ink);
+    position:relative;
+    border:1px solid var(--line);
+    transition:transform .15s ease, box-shadow .15s ease;
+    display:flex;
+    flex-direction:column;
+}
+
+.book:hover{
+    transform:translateY(-4px);
+    box-shadow:0 10px 22px rgba(26,20,32,.12);
+}
+
+.book-thumb{
+    position:relative;
+    aspect-ratio:3/4;
+    background:#f4ece6;
+    overflow:hidden;
+}
+
+.book-thumb img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+.badge-discount{
+    position:absolute;
+    top:8px;
+    left:0;
+    background:var(--flame);
+    color:#fff;
+    font-size:11px;
+    font-weight:800;
+    padding:4px 10px 4px 8px;
+    border-radius:0 20px 20px 0;
+}
+
+.badge-discount::after{
+    content:"";
+    position:absolute;
+    left:0;
+    top:100%;
+    border-width:4px 0 0 8px;
+    border-style:solid;
+    border-color:transparent transparent transparent #8f1400;
+}
+
+.badge-stock{
+    position:absolute;
+    bottom:8px;
+    left:8px;
+    right:8px;
+    background:rgba(26,20,32,.82);
+    color:var(--zest);
+    font-size:10.5px;
+    font-weight:700;
+    text-align:center;
+    padding:4px 6px;
+    border-radius:6px;
+}
+
+.badge-out{
+    position:absolute;
+    inset:0;
+    background:rgba(255,255,255,.72);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+    font-size:13px;
+    color:var(--ink);
+}
+
+.book-info{
+    padding:10px 11px 12px;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    flex:1;
+}
+
+.book-title{
+    font-size:12.5px;
+    font-weight:600;
+    line-height:1.35;
+    height:2.7em;
+    overflow:hidden;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+}
+
+.book-author{
+    font-size:11px;
+    color:var(--muted);
+}
+
+.price-row{
+    margin-top:auto;
+    display:flex;
+    align-items:baseline;
+    gap:6px;
+    flex-wrap:wrap;
+    padding-top:4px;
+}
+
+.price-now{
+    color:var(--flame-dark);
+    font-size:16px;
+    font-weight:800;
+}
+
+.price-was{
+    color:var(--muted);
+    font-size:11px;
+    text-decoration:line-through;
+}
+
+.ship-tag{
+    font-size:10px;
+    color:#1a9a54;
+    font-weight:700;
+}
+
+/* -------------------- empty state -------------------- */
+
+.empty{
+    text-align:center;
+    padding:70px 20px;
+    color:var(--muted);
+}
+
+.empty h3{
+    color:var(--ink);
+    font-size:19px;
+    margin-bottom:8px;
+}
+
+/* -------------------- footer -------------------- */
+
+footer{
+    background:var(--ink);
+    color:#cfc3c9;
+    padding:26px 20px;
+    font-size:12.5px;
+    margin-top:20px;
+}
+
+footer strong{
+    color:#fff;
+}
+
+.footer-inner{
+    max-width:1200px;
+    margin:0 auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:20px;
+    flex-wrap:wrap;
+    text-align:left;
+}
+
+.footer-brand{
+    text-align:left;
+}
+
+.footer-contact{
+    text-align:right;
+}
+
+.footer-contact-title{
+    color:#fff;
+    font-weight:700;
+    margin-bottom:6px;
+}
+
+.footer-contact div{
+    margin-top:3px;
+}
+
+.footer-note{
+    color:#9a8d93;
+    font-size:11px;
+}
+
+@media (max-width:600px){
+    .footer-inner{
+        flex-direction:column;
+        text-align:center;
+    }
+    .footer-brand,
+    .footer-contact{
+        text-align:center;
+    }
+}
+
+/* -------------------- mobile bottom nav -------------------- */
+
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    background:#fff;
+    border-top:1px solid var(--line);
+    display:flex;
+    justify-content:space-around;
+    padding:8px 0 6px;
+    z-index:60;
+    box-shadow:0 -4px 14px rgba(0,0,0,.06);
+}
+
+.bottom-nav a{
+    text-decoration:none;
+    color:var(--muted);
+    font-size:10.5px;
+    font-weight:600;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:2px;
+}
+
+.bottom-nav a.active{
+    color:var(--flame);
+}
+
+.bottom-nav .bn-icon{
+    font-size:19px;
+}
+
+@media (min-width:701px){
+    .bottom-nav{
+        display:none;
+    }
+    body{
+        padding-bottom:0;
+    }
+}
+
+@media (max-width:700px){
+    .header-inner{
+        flex-wrap:wrap;
+    }
+    .logo{
+        order:1;
+    }
+    .header-links{
+        order:2;
+        margin-left:auto;
+    }
+    .search-form{
+        order:3;
+        width:100%;
+    }
+    .flash-inner h2{
+        font-size:18px;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="promo-strip">
+    🚚 Free delivery on orders over ₦10,000 &nbsp;|&nbsp; <span>New titles added every week</span>
+</div>
+
+<header>
+    <div class="header-inner">
+
+        <a href="/" class="logo">The <span>Peniers</span></a>
+
+        <form class="search-form" action="/" method="GET">
+            <input
+                type="text"
+                name="q"
+                placeholder="Search books, authors..."
+                value="{{ search_query }}">
+            <button type="submit">Search</button>
+        </form>
+
+        <div class="header-links">
+            <a href="/cart">
+                <span class="icon-circle">🛒</span>
+                Cart
+            </a>
+            {% if session.get('customer_id') %}
+            <a href="/profile">
+                <span class="icon-circle">👤</span>
+                Profile
+            </a>
+            {% else %}
+            <a href="/login">
+                <span class="icon-circle">👤</span>
+                Login
+            </a>
+            {% endif %}
+        </div>
+
+    </div>
+</header>
+
+<div class="chip-row">
+
+    <a href="/" class="chip {{ 'active' if not selected_category }}">
+        All
+    </a>
+
+    {% for cat in categories %}
+    <a
+        href="/?category={{ cat }}"
+        class="chip {{ 'active' if selected_category == cat }}">
+        {{ cat }}
+    </a>
+    {% endfor %}
+
+</div>
+
+<div class="flash-banner">
+    <div class="flash-inner">
+        <div>
+            <h2>🔥 Flash Deals Are Live</h2>
+            <p>Grab discounted titles before stock runs out.</p>
+        </div>
+
+        <div class="countdown" id="countdown">
+            <div><span class="num" id="cd-h">04</span><span class="lbl">Hrs</span></div>
+            <div><span class="num" id="cd-m">00</span><span class="lbl">Min</span></div>
+            <div><span class="num" id="cd-s">00</span><span class="lbl">Sec</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="section-title">
+    <span class="fire">🔥</span>
+    <h3>
+        {% if selected_category %}
+            {{ selected_category }} Books
+        {% elif search_query %}
+            Results for "{{ search_query }}"
+        {% else %}
+            Just For You
+        {% endif %}
+    </h3>
+    <span class="count">{{ books|length }} item{{ 's' if books|length != 1 else '' }}</span>
+</div>
+
+<div class="grid-wrap">
+
+{% if books %}
+
+<div class="books">
+
+{% for book in books %}
+
+<a class="book" href="/book/{{ book.id }}">
+
+    <div class="book-thumb">
+
+        {% if book.image %}
+        <img src="{{ book.image }}" alt="{{ book.title }}">
+        {% else %}
+        <img src="https://placehold.co/300x400?text={{ book.title|urlencode }}" alt="{{ book.title }}">
+        {% endif %}
+
+        {% if book.discount_percent() > 0 %}
+        <div class="badge-discount">-{{ book.discount_percent() }}%</div>
+        {% endif %}
+
+        {% if book.quantity == 0 %}
+        <div class="badge-out">Out of Stock</div>
+        {% elif book.quantity <= 5 %}
+        <div class="badge-stock">Only {{ book.quantity }} left</div>
+        {% endif %}
+
+    </div>
+
+    <div class="book-info">
+
+        <div class="book-title">{{ book.title }}</div>
+        <div class="book-author">{{ book.author }}</div>
+
+        <div class="price-row">
+            <span class="price-now">₦{{ "%.0f"|format(book.price) }}</span>
+            {% if book.discount_percent() > 0 %}
+            <span class="price-was">₦{{ "%.0f"|format(book.original_price) }}</span>
+            {% endif %}
+        </div>
+
+        <span class="ship-tag">Free shipping</span>
+
+    </div>
+
+</a>
+
+{% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="empty">
+    <h3>No books found</h3>
+    <p>Try a different search or check back soon for new arrivals.</p>
+</div>
+
+{% endif %}
+
+</div>
+
+<footer>
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <strong>The Peniers Bookstore</strong> &nbsp;·&nbsp; © 2026 &nbsp;·&nbsp; All Rights Reserved
+        </div>
+        <div class="footer-contact">
+            <div class="footer-contact-title">Contact Info</div>
+            <div>📱 08038195732 <span class="footer-note">(WhatsApp only)</span></div>
+            <div>✉️ dandavpof</div>
+            <div><a href="/feedback" style="color:#ffb100;">💬 Report a bug / feedback</a></div>
+        </div>
+    </div>
+</footer>
+
+<nav class="bottom-nav">
+    <a href="/" class="active">
+        <span class="bn-icon">🏠</span>
+        Home
+    </a>
+    <a href="/#books">
+        <span class="bn-icon">📚</span>
+        Categories
+    </a>
+    <a href="/cart">
+        <span class="bn-icon">🛒</span>
+        Cart
+    </a>
+    {% if session.get('customer_id') %}
+    <a href="/profile">
+        <span class="bn-icon">👤</span>
+        Profile
+    </a>
+    {% else %}
+    <a href="/login">
+        <span class="bn-icon">👤</span>
+        Login
+    </a>
+    {% endif %}
+</nav>
+
+<script>
+(function(){
+    var end = Date.now() + (4 * 60 * 60 * 1000);
+
+    function tick(){
+        var diff = end - Date.now();
+        if (diff < 0) diff = 0;
+
+        var h = Math.floor(diff / 3600000);
+        var m = Math.floor((diff % 3600000) / 60000);
+        var s = Math.floor((diff % 60000) / 1000);
+
+        document.getElementById('cd-h').textContent = String(h).padStart(2, '0');
+        document.getElementById('cd-m').textContent = String(m).padStart(2, '0');
+        document.getElementById('cd-s').textContent = String(s).padStart(2, '0');
+    }
+
+    tick();
+    setInterval(tick, 1000);
+})();
+</script>
+
+
+
+<!-- ============ AI SUPPORT CHAT WIDGET ============ -->
+<div id="tpb-chat-bubble" onclick="tpbToggleChat()" style="position:fixed; bottom:24px; right:24px; width:56px; height:56px; border-radius:50%; background:#ff3d26; color:#fff; display:flex; align-items:center; justify-content:center; font-size:26px; cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.25); z-index:9999;">
+💬
+</div>
+
+<div id="tpb-chat-panel" style="display:none; position:fixed; bottom:90px; right:24px; width:320px; max-width:88vw; height:420px; max-height:70vh; background:#fff; border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.25); z-index:9999; display:none; flex-direction:column; overflow:hidden; font-family:Arial,sans-serif;">
+
+    <div style="background:#ff3d26; color:#fff; padding:12px 16px; font-weight:700; display:flex; justify-content:space-between; align-items:center;">
+        <span>The Peniers Support</span>
+        <span onclick="tpbToggleChat()" style="cursor:pointer;">&times;</span>
+    </div>
+
+    <div id="tpb-chat-messages" style="flex:1; overflow-y:auto; padding:12px; font-size:13.5px; background:#f9f7f6;">
+        <div style="background:#eee; padding:8px 12px; border-radius:10px; margin-bottom:8px; max-width:85%;">
+            Hi! Ask me about delivery, returns, or your order — or let me know if something's wrong.
+        </div>
+    </div>
+
+    <form id="tpb-chat-form" style="display:flex; border-top:1px solid #eee;" onsubmit="tpbSendChat(event)">
+        <input id="tpb-chat-input" type="text" placeholder="Type a message..." style="flex:1; border:none; padding:12px; font-size:13.5px; outline:none;" autocomplete="off">
+        <button type="submit" style="border:none; background:#ff3d26; color:#fff; padding:0 16px; font-weight:700; cursor:pointer;">Send</button>
+    </form>
+
+</div>
+
+<script>
+
+function tpbToggleChat(){
+    var panel = document.getElementById('tpb-chat-panel');
+    panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
+}
+
+function tpbAddMessage(text, fromUser){
+    var box = document.getElementById('tpb-chat-messages');
+    var bubble = document.createElement('div');
+    bubble.textContent = text;
+    bubble.style.padding = '8px 12px';
+    bubble.style.borderRadius = '10px';
+    bubble.style.marginBottom = '8px';
+    bubble.style.maxWidth = '85%';
+    if (fromUser){
+        bubble.style.background = '#ff3d26';
+        bubble.style.color = '#fff';
+        bubble.style.marginLeft = 'auto';
+    } else {
+        bubble.style.background = '#eee';
+        bubble.style.color = '#1a1420';
+    }
+    box.appendChild(bubble);
+    box.scrollTop = box.scrollHeight;
+}
+
+function tpbSendChat(e){
+    e.preventDefault();
+    var input = document.getElementById('tpb-chat-input');
+    var message = input.value.trim();
+    if (!message) return;
+
+    tpbAddMessage(message, true);
+    input.value = '';
+
+    fetch('/api/chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({message: message})
+    })
+    .then(function(res){ return res.json(); })
+    .then(function(data){
+        tpbAddMessage(data.reply || "Sorry, something went wrong.", false);
+    })
+    .catch(function(){
+        tpbAddMessage("Sorry, support chat is unavailable right now.", false);
+    });
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales Report | The Peniers</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+
+<style>
+
+*{margin:0; padding:0; box-sizing:border-box; font-family:Arial, Helvetica, sans-serif;}
+
+body{background:#0c1422; color:#e6ebf3;}
+
+header{
+    background:#172235;
+    padding:18px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid #263349;
+}
+
+.logo{font-size:22px; font-weight:800; color:#f3bd45;}
+
+nav a{
+    color:#aeb8c8;
+    text-decoration:none;
+    margin-left:20px;
+    font-weight:600;
+    font-size:14px;
+}
+
+nav a:hover{color:#fff;}
+
+.container{
+    max-width:1100px;
+    margin:30px auto;
+    padding:0 20px;
+}
+
+h1{margin-bottom:20px;}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
+    gap:16px;
+    margin-bottom:30px;
+}
+
+.stat-card{
+    background:#172235;
+    border-radius:12px;
+    padding:20px;
+    border:1px solid #263349;
+}
+
+.stat-card .num{
+    font-size:26px;
+    font-weight:800;
+    color:#f3bd45;
+}
+
+.stat-card .lbl{
+    font-size:13px;
+    color:#aeb8c8;
+    margin-top:4px;
+}
+
+.charts{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:16px;
+    margin-bottom:30px;
+}
+
+.chart-card{
+    background:#172235;
+    border-radius:12px;
+    padding:20px;
+    border:1px solid #263349;
+}
+
+.chart-card h2{
+    font-size:15px;
+    margin-bottom:14px;
+    color:#e6ebf3;
+}
+
+.section{
+    background:#172235;
+    border-radius:12px;
+    padding:20px;
+    border:1px solid #263349;
+}
+
+.section h2{font-size:15px; margin-bottom:14px;}
+
+table{width:100%; border-collapse:collapse;}
+
+th, td{
+    text-align:left;
+    padding:9px 8px;
+    font-size:13px;
+    border-bottom:1px solid #263349;
+}
+
+th{color:#aeb8c8; font-weight:600;}
+
+.badge{
+    padding:3px 10px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:700;
+}
+
+.badge.paid{background:#1c3d2c; color:#5fd88a;}
+.badge.unpaid{background:#3d1c22; color:#e07684;}
+
+.empty{color:#aeb8c8; padding:20px 0; text-align:center;}
+
+@media (max-width:800px){
+    .charts{grid-template-columns:1fr;}
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">The Peniers &middot; Sales</div>
+    <nav>
+        <a href="/sales-report">Sales Report</a>
+        <a href="/sales-logout">Logout</a>
+    </nav>
+</header>
+
+<div class="container">
+
+    <h1>Sales Report</h1>
+
+    <div class="stats">
+
+        <div class="stat-card">
+            <div class="num">₦{{ "{:,.0f}".format(total_sales) }}</div>
+            <div class="lbl">Total paid sales</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="num">{{ orders_count }}</div>
+            <div class="lbl">Total orders</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="num">{{ paid_orders_count }}</div>
+            <div class="lbl">Paid orders</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="num">₦{{ "{:,.0f}".format(average_order_value) }}</div>
+            <div class="lbl">Average order value</div>
+        </div>
+
+    </div>
+
+    <div class="charts">
+
+        <div class="chart-card">
+            <h2>Sales — Last 14 Days</h2>
+            <canvas id="dailyChart" height="110"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <h2>Revenue by Category</h2>
+            <canvas id="categoryChart" height="110"></canvas>
+        </div>
+
+    </div>
+
+    <div class="section">
+
+        <h2>Recent Orders</h2>
+
+        {% if recent_orders %}
+
+        <table>
+            <tr>
+                <th>Order #</th>
+                <th>Total</th>
+                <th>Payment</th>
+                <th>Date</th>
+            </tr>
+            {% for order in recent_orders %}
+            <tr>
+                <td>{{ order.order_number or ('#' ~ order.id) }}</td>
+                <td>₦{{ "{:,.0f}".format(order.total) }}</td>
+                <td>
+                    <span class="badge {{ 'paid' if order.payment_status == 'Paid' else 'unpaid' }}">
+                        {{ order.payment_status }}
+                    </span>
+                </td>
+                <td>{{ order.created_at.strftime("%d %b %Y") }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        {% else %}
+        <div class="empty">No orders yet.</div>
+        {% endif %}
+
+    </div>
+
+</div>
+
+<script>
+
+const dailyLabels = {{ daily_labels|tojson }};
+const dailyTotals = {{ daily_totals|tojson }};
+const categoryLabels = {{ category_labels|tojson }};
+const categoryTotals = {{ category_totals|tojson }};
+
+new Chart(document.getElementById('dailyChart'), {
+    type: 'line',
+    data: {
+        labels: dailyLabels,
+        datasets: [{
+            label: 'Sales (₦)',
+            data: dailyTotals,
+            borderColor: '#f3bd45',
+            backgroundColor: 'rgba(243,189,69,0.15)',
+            fill: true,
+            tension: 0.3
+        }]
+    },
+    options: {
+        plugins: { legend: { display: false } },
+        scales: {
+            x: { ticks: { color: '#aeb8c8' }, grid: { color: '#263349' } },
+            y: { ticks: { color: '#aeb8c8' }, grid: { color: '#263349' } }
+        }
+    }
+});
+
+new Chart(document.getElementById('categoryChart'), {
+    type: 'bar',
+    data: {
+        labels: categoryLabels.length ? categoryLabels : ['No sales yet'],
+        datasets: [{
+            label: 'Revenue (₦)',
+            data: categoryTotals.length ? categoryTotals : [0],
+            backgroundColor: '#f3bd45'
+        }]
+    },
+    options: {
+        plugins: { legend: { display: false } },
+        scales: {
+            x: { ticks: { color: '#aeb8c8' }, grid: { display: false } },
+            y: { ticks: { color: '#aeb8c8' }, grid: { color: '#263349' } }
+        }
+    }
+});
+
+</script>
+
+</body>
+</html>

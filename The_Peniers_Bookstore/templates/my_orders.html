@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Orders | The Peniers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+        }
+
+        header {
+            background: #222;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            width: 80%;
+            margin: 30px auto;
+        }
+
+        .order {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ccc;
+        }
+
+        .status {
+            color: green;
+            font-weight: bold;
+        }
+
+        .paid {
+            color: green;
+            font-weight: bold;
+        }
+
+        .unpaid {
+            color: #b00;
+            font-weight: bold;
+        }
+
+        .empty {
+            text-align: center;
+            color: #777;
+            padding: 40px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>The Peniers</h1>
+    <h2>My Orders</h2>
+</header>
+
+
+<div class="container">
+
+    {% if orders %}
+
+        {% for order in orders %}
+
+        <div class="order">
+            <h3>Order #{{ order.id }}</h3>
+
+            {% for item in order.items %}
+            <p>Book: {{ item.book.title }} × {{ item.quantity }}</p>
+            {% endfor %}
+
+            <p>Total: ₦{{ order.total }}</p>
+            <p>Date: {{ order.created_at.strftime("%d %B %Y") }}</p>
+            <p>Status: <span class="status">{{ order.status }}</span></p>
+            <p>
+                Payment:
+                <span class="{{ 'paid' if order.payment_status == 'Paid' else 'unpaid' }}">
+                    {{ order.payment_status }}
+                </span>
+                {% if order.payment_method %}
+                    &mdash; {{ order.payment_method }}
+                {% endif %}
+            </p>
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty">
+            You haven't placed any orders yet.
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+
+
+<!-- ============ AI SUPPORT CHAT WIDGET ============ -->
+<div id="tpb-chat-bubble" onclick="tpbToggleChat()" style="position:fixed; bottom:24px; right:24px; width:56px; height:56px; border-radius:50%; background:#ff3d26; color:#fff; display:flex; align-items:center; justify-content:center; font-size:26px; cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.25); z-index:9999;">
+💬
+</div>
+
+<div id="tpb-chat-panel" style="display:none; position:fixed; bottom:90px; right:24px; width:320px; max-width:88vw; height:420px; max-height:70vh; background:#fff; border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.25); z-index:9999; display:none; flex-direction:column; overflow:hidden; font-family:Arial,sans-serif;">
+
+    <div style="background:#ff3d26; color:#fff; padding:12px 16px; font-weight:700; display:flex; justify-content:space-between; align-items:center;">
+        <span>The Peniers Support</span>
+        <span onclick="tpbToggleChat()" style="cursor:pointer;">&times;</span>
+    </div>
+
+    <div id="tpb-chat-messages" style="flex:1; overflow-y:auto; padding:12px; font-size:13.5px; background:#f9f7f6;">
+        <div style="background:#eee; padding:8px 12px; border-radius:10px; margin-bottom:8px; max-width:85%;">
+            Hi! Ask me about delivery, returns, or your order — or let me know if something's wrong.
+        </div>
+    </div>
+
+    <form id="tpb-chat-form" style="display:flex; border-top:1px solid #eee;" onsubmit="tpbSendChat(event)">
+        <input id="tpb-chat-input" type="text" placeholder="Type a message..." style="flex:1; border:none; padding:12px; font-size:13.5px; outline:none;" autocomplete="off">
+        <button type="submit" style="border:none; background:#ff3d26; color:#fff; padding:0 16px; font-weight:700; cursor:pointer;">Send</button>
+    </form>
+
+</div>
+
+<script>
+
+function tpbToggleChat(){
+    var panel = document.getElementById('tpb-chat-panel');
+    panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
+}
+
+function tpbAddMessage(text, fromUser){
+    var box = document.getElementById('tpb-chat-messages');
+    var bubble = document.createElement('div');
+    bubble.textContent = text;
+    bubble.style.padding = '8px 12px';
+    bubble.style.borderRadius = '10px';
+    bubble.style.marginBottom = '8px';
+    bubble.style.maxWidth = '85%';
+    if (fromUser){
+        bubble.style.background = '#ff3d26';
+        bubble.style.color = '#fff';
+        bubble.style.marginLeft = 'auto';
+    } else {
+        bubble.style.background = '#eee';
+        bubble.style.color = '#1a1420';
+    }
+    box.appendChild(bubble);
+    box.scrollTop = box.scrollHeight;
+}
+
+function tpbSendChat(e){
+    e.preventDefault();
+    var input = document.getElementById('tpb-chat-input');
+    var message = input.value.trim();
+    if (!message) return;
+
+    tpbAddMessage(message, true);
+    input.value = '';
+
+    fetch('/api/chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({message: message})
+    })
+    .then(function(res){ return res.json(); })
+    .then(function(data){
+        tpbAddMessage(data.reply || "Sorry, something went wrong.", false);
+    })
+    .catch(function(){
+        tpbAddMessage("Sorry, support chat is unavailable right now.", false);
+    });
+}
+
+</script>
+
+</body>
+</html>

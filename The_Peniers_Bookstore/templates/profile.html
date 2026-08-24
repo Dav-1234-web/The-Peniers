@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | The Peniers</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f4f6f9;
+            color: #333;
+        }
+
+        header {
+            background: #0A2540;
+            color: white;
+            padding: 18px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 30px;
+            font-weight: bold;
+            color: #F4B400;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #F4B400;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 45px auto;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.10);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: #0B5ED7;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 35px;
+            font-weight: bold;
+        }
+
+        .profile-header h1 {
+            color: #0A2540;
+            margin-bottom: 8px;
+        }
+
+        .profile-header p {
+            color: #777;
+        }
+
+        .section {
+            margin-top: 25px;
+        }
+
+        .section h2 {
+            color: #0A2540;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .value {
+            color: #333;
+            text-align: right;
+        }
+
+        .actions {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 13px 22px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .orders {
+            background: #0B5ED7;
+            color: white;
+        }
+
+        .cart {
+            background: #F4B400;
+            color: black;
+        }
+
+        .logout {
+            background: #dc3545;
+            color: white;
+        }
+
+        footer {
+            margin-top: 60px;
+            background: #0A2540;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        @media (max-width: 650px) {
+
+            header {
+                padding: 18px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav a {
+                margin-left: 8px;
+                margin-right: 8px;
+            }
+
+            .container {
+                width: 94%;
+            }
+
+            .profile-card {
+                padding: 25px;
+            }
+
+            .info-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .value {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        The Peniers
+    </div>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/cart">Cart</a>
+        <a href="/my-orders">My Orders</a>
+        <a href="/logout">Logout</a>
+    </nav>
+
+</header>
+
+
+<div class="container">
+
+    <div class="profile-card">
+
+        <div class="profile-header">
+
+            <div class="avatar">
+                {{ customer.fullname[0]|upper if customer and customer.fullname else "U" }}
+            </div>
+
+            <h1>
+                My Profile
+            </h1>
+
+            <p>
+                Manage your The Peniers account
+            </p>
+
+        </div>
+
+
+        <div class="section">
+
+            <h2>
+                Personal Information
+            </h2>
+
+            <div class="info-row">
+
+                <span class="label">
+                    Full Name
+                </span>
+
+                <span class="value">
+                    {{ customer.fullname }}
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span class="label">
+                    Email Address
+                </span>
+
+                <span class="value">
+                    {{ customer.email }}
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span class="label">
+                    Phone Number
+                </span>
+
+                <span class="value">
+                    {{ customer.phone }}
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span class="label">
+                    Delivery Address
+                </span>
+
+                <span class="value">
+                    {{ customer.address }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="section">
+
+            <h2>
+                Auto-Debit Account
+            </h2>
+
+            {% if customer.has_saved_account() %}
+
+            <div class="info-row">
+                <span class="label">Bank</span>
+                <span class="value">{{ customer.bank_name }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="label">Account Number</span>
+                <span class="value">{{ customer.masked_account_number() }}</span>
+            </div>
+
+            {% else %}
+
+            <p style="color:#777; padding: 10px 0;">
+                No account saved yet. Add one so future orders can be paid
+                automatically at checkout.
+            </p>
+
+            {% endif %}
+
+            <div class="actions">
+                <a class="btn orders" href="/add-account">
+                    {% if customer.has_saved_account() %}
+                        Manage Auto-Debit Account
+                    {% else %}
+                        Add Auto-Debit Account
+                    {% endif %}
+                </a>
+            </div>
+
+        </div>
+
+
+        <div class="actions">
+
+            <a
+                class="btn orders"
+                href="/my-orders">
+                My Orders
+            </a>
+
+            <a
+                class="btn cart"
+                href="/cart">
+                Shopping Cart
+            </a>
+
+            <a
+                class="btn logout"
+                href="/logout">
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<footer>
+
+    © 2026 The Peniers Bookstore. All Rights Reserved.
+    <br><br>Contact: 08038195732 (WhatsApp only) &nbsp;|&nbsp; dandavpof &nbsp;|&nbsp; <a href="/feedback" style="color:inherit;">Report a bug / feedback</a>
+
+</footer>
+
+
+
+<!-- ============ AI SUPPORT CHAT WIDGET ============ -->
+<div id="tpb-chat-bubble" onclick="tpbToggleChat()" style="position:fixed; bottom:24px; right:24px; width:56px; height:56px; border-radius:50%; background:#ff3d26; color:#fff; display:flex; align-items:center; justify-content:center; font-size:26px; cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.25); z-index:9999;">
+💬
+</div>
+
+<div id="tpb-chat-panel" style="display:none; position:fixed; bottom:90px; right:24px; width:320px; max-width:88vw; height:420px; max-height:70vh; background:#fff; border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.25); z-index:9999; display:none; flex-direction:column; overflow:hidden; font-family:Arial,sans-serif;">
+
+    <div style="background:#ff3d26; color:#fff; padding:12px 16px; font-weight:700; display:flex; justify-content:space-between; align-items:center;">
+        <span>The Peniers Support</span>
+        <span onclick="tpbToggleChat()" style="cursor:pointer;">&times;</span>
+    </div>
+
+    <div id="tpb-chat-messages" style="flex:1; overflow-y:auto; padding:12px; font-size:13.5px; background:#f9f7f6;">
+        <div style="background:#eee; padding:8px 12px; border-radius:10px; margin-bottom:8px; max-width:85%;">
+            Hi! Ask me about delivery, returns, or your order — or let me know if something's wrong.
+        </div>
+    </div>
+
+    <form id="tpb-chat-form" style="display:flex; border-top:1px solid #eee;" onsubmit="tpbSendChat(event)">
+        <input id="tpb-chat-input" type="text" placeholder="Type a message..." style="flex:1; border:none; padding:12px; font-size:13.5px; outline:none;" autocomplete="off">
+        <button type="submit" style="border:none; background:#ff3d26; color:#fff; padding:0 16px; font-weight:700; cursor:pointer;">Send</button>
+    </form>
+
+</div>
+
+<script>
+
+function tpbToggleChat(){
+    var panel = document.getElementById('tpb-chat-panel');
+    panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
+}
+
+function tpbAddMessage(text, fromUser){
+    var box = document.getElementById('tpb-chat-messages');
+    var bubble = document.createElement('div');
+    bubble.textContent = text;
+    bubble.style.padding = '8px 12px';
+    bubble.style.borderRadius = '10px';
+    bubble.style.marginBottom = '8px';
+    bubble.style.maxWidth = '85%';
+    if (fromUser){
+        bubble.style.background = '#ff3d26';
+        bubble.style.color = '#fff';
+        bubble.style.marginLeft = 'auto';
+    } else {
+        bubble.style.background = '#eee';
+        bubble.style.color = '#1a1420';
+    }
+    box.appendChild(bubble);
+    box.scrollTop = box.scrollHeight;
+}
+
+function tpbSendChat(e){
+    e.preventDefault();
+    var input = document.getElementById('tpb-chat-input');
+    var message = input.value.trim();
+    if (!message) return;
+
+    tpbAddMessage(message, true);
+    input.value = '';
+
+    fetch('/api/chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({message: message})
+    })
+    .then(function(res){ return res.json(); })
+    .then(function(data){
+        tpbAddMessage(data.reply || "Sorry, something went wrong.", false);
+    })
+    .catch(function(){
+        tpbAddMessage("Sorry, support chat is unavailable right now.", false);
+    });
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complaints | The Peniers Admin</title>
+
+<style>
+
+*{margin:0; padding:0; box-sizing:border-box; font-family:Arial, Helvetica, sans-serif;}
+
+body{background:#f4f6f9;}
+
+header{
+    background:#1a1420;
+    color:white;
+    padding:18px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{font-size:22px; font-weight:800;}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    margin-left:20px;
+    font-weight:600;
+    font-size:14px;
+    opacity:.9;
+}
+
+nav a:hover{opacity:1;}
+
+.container{
+    max-width:900px;
+    margin:30px auto;
+    padding:0 20px;
+}
+
+h1{margin-bottom:20px; color:#1a1420;}
+
+.complaint-card{
+    background:white;
+    border-radius:12px;
+    padding:18px 20px;
+    margin-bottom:14px;
+    box-shadow:0 3px 10px rgba(0,0,0,.06);
+    border-left:4px solid #ff3d26;
+}
+
+.complaint-meta{
+    display:flex;
+    justify-content:space-between;
+    font-size:12.5px;
+    color:#999;
+    margin-bottom:10px;
+}
+
+.complaint-meta strong{color:#1a1420;}
+
+.bubble{
+    background:#f9f7f6;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:13.5px;
+    margin-bottom:8px;
+}
+
+.bubble.reply{
+    background:#fff0ee;
+}
+
+.bubble .who{
+    font-weight:700;
+    font-size:11.5px;
+    color:#777;
+    margin-bottom:3px;
+}
+
+.empty{
+    text-align:center;
+    color:#999;
+    padding:50px 20px;
+    background:white;
+    border-radius:12px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">The Peniers &middot; Admin</div>
+    <nav>
+        <a href="/admin">Dashboard</a>
+        <a href="/manage-books">Books</a>
+        <a href="/admin-orders">Orders</a>
+        <a href="/admin/complaints">Complaints</a>
+        <a href="/admin/feedback">Feedback</a>
+        <a href="/sales-report">Sales</a>
+        <a href="/admin-logout">Logout</a>
+    </nav>
+</header>
+
+<div class="container">
+
+    <h1>Customer Complaints</h1>
+
+    {% if complaints %}
+
+        {% for c in complaints %}
+        <div class="complaint-card">
+            <div class="complaint-meta">
+                <span>
+                    <strong>{{ c.customer.fullname if c.customer else "Guest" }}</strong>
+                    {% if c.customer %} &middot; {{ c.customer.phone }}{% endif %}
+                </span>
+                <span>{{ c.created_at.strftime("%d %b %Y, %I:%M %p") }}</span>
+            </div>
+
+            <div class="bubble">
+                <div class="who">Customer</div>
+                {{ c.message }}
+            </div>
+
+            {% if c.ai_response %}
+            <div class="bubble reply">
+                <div class="who">AI Response</div>
+                {{ c.ai_response }}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+    {% else %}
+        <div class="empty">No complaints reported yet.</div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>

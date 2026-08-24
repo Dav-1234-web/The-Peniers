@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orders | The Peniers Admin</title>
+
+<style>
+
+*{margin:0; padding:0; box-sizing:border-box; font-family:Arial, Helvetica, sans-serif;}
+
+body{background:#f4f6f9;}
+
+header{
+    background:#1a1420;
+    color:white;
+    padding:18px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{font-size:22px; font-weight:800;}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    margin-left:20px;
+    font-weight:600;
+    font-size:14px;
+    opacity:.9;
+}
+
+nav a:hover{opacity:1;}
+
+.container{
+    max-width:1100px;
+    margin:30px auto;
+    padding:0 20px;
+}
+
+h1{margin-bottom:20px; color:#1a1420;}
+
+.section{
+    background:white;
+    border-radius:12px;
+    padding:20px;
+    box-shadow:0 3px 10px rgba(0,0,0,.06);
+}
+
+table{width:100%; border-collapse:collapse;}
+
+th, td{
+    text-align:left;
+    padding:10px 8px;
+    font-size:13.5px;
+    border-bottom:1px solid #eee;
+}
+
+th{color:#777; font-weight:600;}
+
+.badge{
+    padding:3px 10px;
+    border-radius:20px;
+    font-size:11.5px;
+    font-weight:700;
+}
+
+.badge.paid{background:#d4edda; color:#155724;}
+.badge.unpaid{background:#f8d7da; color:#721c24;}
+
+.view-link{
+    color:#ff3d26;
+    text-decoration:none;
+    font-weight:700;
+}
+
+.empty{color:#999; padding:30px 0; text-align:center;}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">The Peniers &middot; Admin</div>
+    <nav>
+        <a href="/admin">Dashboard</a>
+        <a href="/manage-books">Books</a>
+        <a href="/admin-orders">Orders</a>
+        <a href="/admin/complaints">Complaints</a>
+        <a href="/admin/feedback">Feedback</a>
+        <a href="/sales-report">Sales</a>
+        <a href="/admin-logout">Logout</a>
+    </nav>
+</header>
+
+<div class="container">
+
+    <h1>All Orders</h1>
+
+    <div class="section">
+
+        {% if orders %}
+
+        <table>
+            <tr>
+                <th>Order #</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Payment</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th></th>
+            </tr>
+
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.order_number or ('#' ~ order.id) }}</td>
+                <td>{{ order.customer.fullname }}</td>
+                <td>{{ order.customer.phone }}</td>
+                <td>{{ order.items|length }}</td>
+                <td>₦{{ "{:,.0f}".format(order.total) }}</td>
+                <td>
+                    <span class="badge {{ 'paid' if order.payment_status == 'Paid' else 'unpaid' }}">
+                        {{ order.payment_status }}
+                    </span>
+                    <div style="font-size:11px; color:#999; margin-top:2px;">
+                        {{ order.payment_method or "" }}
+                    </div>
+                </td>
+                <td>{{ order.status }}</td>
+                <td>{{ order.created_at.strftime("%d %b %Y") }}</td>
+                <td><a class="view-link" href="/admin/order/{{ order.id }}">View Details</a></td>
+            </tr>
+            {% endfor %}
+
+        </table>
+
+        {% else %}
+        <div class="empty">No orders have been placed yet.</div>
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+</html>
